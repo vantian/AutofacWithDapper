@@ -1,38 +1,57 @@
-﻿using System;
+﻿using Autofac;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Dependency_Injection_with_Autofac.Repository;
+using Dependency_Injection_with_Autofac.Interface;
 using Dependency_Injection_with_Autofac.Models;
+using Dependency_Injection_with_Autofac.Services;
 
 namespace Dependency_Injection_with_Autofac
 {
     class Program
     {
+        private static IContainer Container { get; set; }
+
         static void Main(string[] args)
         {
-            MyFunction myfunc = new MyFunction();
-            var myCustomersList = myfunc.GetAllCustomers();
-            foreach (var cust in myCustomersList.ToList())
+            //Autofac Register component
+            ContainerBuilder builder = new ContainerBuilder();
+            builder.RegisterType<CustomersService>().As<ICustomersService>();
+            builder.RegisterType<MyApplicationLogic>().As<MyApplicationLogic>();
+
+            //build component into Autofac container
+            Container = builder.Build();
+
+            //this is smilliar to MyApplicationLogic application = new MyApplicationLogic();
+            MyApplicationLogic application = Container.Resolve<MyApplicationLogic>();
+
+            //Get customer data from database
+            IEnumerable<Customers> myCustomersList = application.GetAllCustomers();
+
+            foreach (Customers cust in myCustomersList.ToList())
             {
                 Console.WriteLine(cust.ContactName);
             }
         }
+        
     }
 
-    public class MyFunction
+    /// <summary>
+    /// Write some logic to get data using IoC structure
+    /// we're using separate class because Main(string[] args) is a static class
+    /// </summary>
+    public class MyApplicationLogic
     {
-        private CustomersRepository _custRepo;
-        public MyFunction()
+        private readonly ICustomersService _custService;
+        public MyApplicationLogic(ICustomersService CustService)
         {
-            _custRepo = new CustomersRepository();
-
+            _custService = CustService;
         }
-        
+
         public IEnumerable<Customers> GetAllCustomers()
         {
-            return _custRepo.GetAll();
+            Console.WriteLine("Code injected!");
+            return this._custService.GetAll();
         }
     }
 }

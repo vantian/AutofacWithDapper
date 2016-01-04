@@ -1,19 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Dapper;
 using System.Data.SqlClient;
 using System.Configuration;
 using Dependency_Injection_with_Autofac.Models;
+using Dependency_Injection_with_Autofac.Interface;
 
-namespace Dependency_Injection_with_Autofac.Repository
+namespace Dependency_Injection_with_Autofac.Services
 {
-    public class CustomersRepository
+    public class CustomersService : ICustomersService
     {
         SqlConnection _myCon;
-        public CustomersRepository()
+        public CustomersService()
         {
             _myCon = new SqlConnection(ConfigurationManager.ConnectionStrings["myConStr"].ConnectionString);
         }
