@@ -30,9 +30,10 @@ namespace Dependency_Injection_with_Autofac
 
             foreach (Customers cust in myCustomersList.ToList())
             {
-                Console.WriteLine(cust.ContactName);
+                Console.WriteLine(String.Format("Name: {0} - Company: {1}", cust.ContactName, cust.CompanyName));
             }
         }
+
         
     }
 
